@@ -10,7 +10,8 @@ const getItems = (req, res) => {
 };
 
 const createItem = (req, res) => {
-  const { name, weather, imageUrl, userId } = req.body;
+  const { name, weather, imageUrl } = req.body;
+  const userId = req.user._id;
 
   if (!userId) {
     return res.status(400).send({ message: "User ID is required" });
