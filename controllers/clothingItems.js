@@ -57,8 +57,46 @@ const deleteItem = (req, res) => {
         return res.status(NOT_FOUND).send({ message: err.message });
       }
       return res
-        .status(INTERNAL_SERVER_ERROR)
+        .status(BAD_REQUEST)
         .send({ message: "Error deleting the item" });
+    });
+};
+
+const likeItem = (req, res) => {
+  Item.findByIdAndUpdate(
+    req.params.itemId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
+    .then((item) => {
+      if (!item) {
+        return res.status(NOT_FOUND).send({ message: "Item not found" });
+      }
+      res.status(OK).send({ data: item });
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(BAD_REQUEST).send({ message: "Error liking the item" });
+    });
+};
+
+const dislikeItem = (req, res) => {
+  Item.findByIdAndUpdate(
+    req.params.itemId,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  )
+    .then((item) => {
+      if (!item) {
+        return res.status(NOT_FOUND).send({ message: "Item not found" });
+      }
+      res.status(OK).send({ data: item });
+    })
+    .catch((err) => {
+      console.error(err);
+      return res
+        .status(BAD_REQUEST)
+        .send({ message: "Error unliking the item" });
     });
 };
 
@@ -66,4 +104,6 @@ module.exports = {
   getItems,
   createItem,
   deleteItem,
+  likeItem,
+  dislikeItem,
 };
