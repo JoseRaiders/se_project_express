@@ -34,9 +34,7 @@ const getUser = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Error fetching the user" });
+      res.status(BAD_REQUEST).send({ message: "Error fetching the user" });
     });
 };
 
