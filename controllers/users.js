@@ -1,27 +1,42 @@
 const User = require("../models/user");
+const {
+  OK,
+  CREATED,
+  BAD_REQUEST,
+  NOT_FOUND,
+  INTERNAL_SERVER_ERROR,
+} = require("../utils/errors");
 
 const getUsers = (req, res) => {
-  // console.log("IN CONTROLLER");
   User.find({})
-    .then((users) => res.status(200).send({ data: users }))
+    .then((users) => res.status(OK).send({ data: users }))
     .catch((err) => {
-      console.log(err);
-      res.status(500).send({ message: "Error getting users" });
+      console.error(err);
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Error getting users" });
     });
 };
 
 const getUser = (req, res) => {
   const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(BAD_REQUEST).send({ message: "User ID is required" });
+  }
+
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: "User not found" });
+        return res.status(NOT_FOUND).send({ message: "User not found" });
       }
-      res.status(200).send({ data: user });
+      res.status(OK).send({ data: user });
     })
     .catch((err) => {
-      console.log(err);
-      res.status(500).send({ message: "Error fetching the user" });
+      console.error(err);
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Error fetching the user" });
     });
 };
 
@@ -29,13 +44,15 @@ const createUser = (req, res) => {
   const { name, avatar } = req.body;
 
   User.create({ name, avatar })
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.status(CREATED).send({ data: user }))
     .catch((err) => {
+      console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: err.message });
       }
-      console.log(err);
-      return res.status(500).send({ message: "Error creating the user" });
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Error creating the user" });
     });
 };
 
