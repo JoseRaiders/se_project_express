@@ -51,7 +51,7 @@ const deleteItem = (req, res) => {
     .then((item) => {
       return res
         .status(OK)
-        .send({ message: item + "Item deleted successfully" });
+        .send({ message: `${item} Item deleted successfully` });
     })
     .catch((err) => {
       console.error(err);
@@ -74,7 +74,7 @@ const likeItem = (req, res) => {
       if (!item) {
         return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
-      res.status(OK).send({ data: item });
+      return res.status(OK).send({ data: item });
     })
     .catch((err) => {
       console.error(err);
@@ -92,7 +92,7 @@ const dislikeItem = (req, res) => {
       if (!item) {
         return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
-      res.status(OK).send({ data: item });
+      return res.status(OK).send({ data: item });
     })
     .catch((err) => {
       console.error(err);
