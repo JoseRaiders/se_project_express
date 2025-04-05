@@ -33,8 +33,13 @@ const getUser = (req, res) => {
     )
     .catch((err) => {
       console.error(err);
+      if (err.name === "CastError") {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid user ID format" });
+      }
       return res
-        .status(BAD_REQUEST)
+        .status(INTERNAL_SERVER_ERROR)
         .send({ message: "Error fetching the user" });
     });
 };
@@ -48,6 +53,11 @@ const createUser = (req, res) => {
       console.error(err);
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
+      }
+      if (err.name === "CastError") {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid input format" });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
