@@ -8,7 +8,7 @@ const {
 } = require("../utils/errors");
 
 const getUsers = (req, res) => {
-  return User.find({})
+  User.find({})
     .then((users) => res.status(OK).send({ data: users }))
     .catch((err) => {
       console.error(err);
@@ -26,12 +26,11 @@ const getUser = (req, res) => {
   }
 
   return User.findById(userId)
-    .then((user) => {
-      if (!user) {
-        return res.status(NOT_FOUND).send({ message: "User not found" });
-      }
-      return res.status(OK).send({ data: user });
-    })
+    .then((user) =>
+      user
+        ? res.status(OK).send({ data: user })
+        : res.status(NOT_FOUND).send({ message: "User not found" })
+    )
     .catch((err) => {
       console.error(err);
       return res
