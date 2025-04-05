@@ -33,6 +33,11 @@ const createItem = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
+      if (err.name === "CastError") {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid input format" });
+      }
       return res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: "Error creating the item" });
@@ -53,6 +58,11 @@ const deleteItem = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
+      if (err.name === "CastError") {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid item ID format" });
+      }
       if (err.statusCode === NOT_FOUND) {
         return res.status(NOT_FOUND).send({ message: err.message });
       }
@@ -76,7 +86,14 @@ const likeItem = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      return res.status(BAD_REQUEST).send({ message: "Error liking the item" });
+      if (err.name === "CastError") {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid item ID format" });
+      }
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Error liking the item" });
     });
 };
 
@@ -94,8 +111,13 @@ const dislikeItem = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
+      if (err.name === "CastError") {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid item ID format" });
+      }
       return res
-        .status(BAD_REQUEST)
+        .status(INTERNAL_SERVER_ERROR)
         .send({ message: "Error unliking the item" });
     });
 };
