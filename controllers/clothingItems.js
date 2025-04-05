@@ -48,8 +48,8 @@ const deleteItem = (req, res) => {
       error.statusCode = NOT_FOUND;
       throw error;
     })
-    .then(() => {
-      return res.status(OK).send({ message: "Item deleted successfully" });
+    .then((item) => {
+      res.status(OK).send({ message: `${item} Item deleted successfully` });
     })
     .catch((err) => {
       console.error(err);
