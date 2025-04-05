@@ -26,7 +26,7 @@ const createItem = (req, res) => {
     return res.status(BAD_REQUEST).send({ message: "Missing required fields" });
   }
 
-  Item.create({ name, weather, imageUrl, owner: userId })
+  return Item.create({ name, weather, imageUrl, owner: userId })
     .then((item) => res.status(CREATED).send({ data: item }))
     .catch((err) => {
       console.error(err);
