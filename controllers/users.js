@@ -30,11 +30,13 @@ const getUser = (req, res) => {
       if (!user) {
         return res.status(NOT_FOUND).send({ message: "User not found" });
       }
-      res.status(OK).send({ data: user });
+      return res.status(OK).send({ data: user });
     })
     .catch((err) => {
       console.error(err);
-      res.status(BAD_REQUEST).send({ message: "Error fetching the user" });
+      return res
+        .status(BAD_REQUEST)
+        .send({ message: "Error fetching the user" });
     });
 };
 
