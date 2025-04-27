@@ -64,17 +64,6 @@ const loginUser = (req, res) => {
     });
 };
 
-// const getUsers = (req, res) => {
-//   User.find({})
-//     .then((users) => res.status(OK).send({ data: users }))
-//     .catch((err) => {
-//       console.error(err);
-//       return res
-//         .status(INTERNAL_SERVER_ERROR)
-//         .send({ message: "Error getting users" });
-//     });
-// };
-
 const updateUserProfile = (req, res) => {
   const { name, avatar } = req.body;
 
@@ -93,6 +82,7 @@ const updateUserProfile = (req, res) => {
       if (!user) {
         return res.status(NOT_FOUND).send({ message: "User not found" });
       }
+      delete user.password;
       return res.status(OK).send({ data: user });
     })
     .catch((err) => {
