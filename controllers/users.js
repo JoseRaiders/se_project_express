@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = require("../utils/config");
 const User = require("../models/user");
 const {
   OK,
@@ -57,7 +58,9 @@ const loginUser = (req, res) => {
       res.send({ token });
     })
     .catch((err) => {
-      res.status(UNAUTHORIZED_ERROR).send({ message: err.message });
+      res
+        .status(UNAUTHORIZED_ERROR)
+        .send({ message: "Authentication failed. Invalid email or password" });
     });
 };
 
