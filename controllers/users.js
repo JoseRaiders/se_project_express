@@ -64,14 +64,49 @@ const loginUser = (req, res) => {
     });
 };
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(OK).send({ data: users }))
+// const getUsers = (req, res) => {
+//   User.find({})
+//     .then((users) => res.status(OK).send({ data: users }))
+//     .catch((err) => {
+//       console.error(err);
+//       return res
+//         .status(INTERNAL_SERVER_ERROR)
+//         .send({ message: "Error getting users" });
+//     });
+// };
+
+const updateUserProfile = (req, res) => {
+  const { name, avatar } = req.body;
+
+  if (!name && !avatar) {
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: "Name or Avatar must be provided" });
+  }
+
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, avatar },
+    { new: true, runValidators: true }
+  )
+    .then((user) => {
+      if (!user) {
+        return res.status(NOT_FOUND).send({ message: "User not found" });
+      }
+      return res.status(OK).send({ data: user });
+    })
     .catch((err) => {
-      console.error(err);
+      if (err.name === "ValidationError") {
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+      }
+      if (err.name === "CastError") {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data format for name or avatar" });
+      }
       return res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Error getting users" });
+        .send({ message: "Error updating user profile" });
     });
 };
 
@@ -100,6 +135,6 @@ const getCurrentUser = (req, res) => {
 module.exports = {
   createUser,
   loginUser,
-  getUsers,
+  updateUserProfile,
   getCurrentUser,
 };
