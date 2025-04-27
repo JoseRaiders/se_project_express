@@ -75,12 +75,8 @@ const getUsers = (req, res) => {
     });
 };
 
-const getUser = (req, res) => {
-  const { userId } = req.params;
-
-  if (!userId) {
-    return res.status(BAD_REQUEST).send({ message: "User ID is required" });
-  }
+const getCurrentUser = (req, res) => {
+  const userId = req.user._id;
 
   return User.findById(userId)
     .then((user) =>
@@ -105,5 +101,5 @@ module.exports = {
   createUser,
   loginUser,
   getUsers,
-  getUser,
+  getCurrentUser,
 };
