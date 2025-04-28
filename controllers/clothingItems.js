@@ -3,6 +3,7 @@ const {
   OK,
   CREATED,
   BAD_REQUEST,
+  FORBIDDEN_ERROR,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
 } = require("../utils/errors");
@@ -46,15 +47,26 @@ const createItem = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
+  const userId = req.user._id;
 
-  Item.findByIdAndDelete(itemId)
-    .orFail(() => {
-      const error = new Error("Clothing item not found");
-      error.statusCode = NOT_FOUND;
-      throw error;
-    })
+  Item.findById(itemId)
     .then((item) => {
-      res.status(OK).send({ message: `${item} Item deleted successfully` });
+      if (!item) {
+        const error = new Error("Clothing item not found");
+        error.statusCode = NOT_FOUND;
+        throw error;
+      }
+
+      if (item.owner.toString() !== userId.toString()) {
+        return res
+          .status(FORBIDDEN_ERROR)
+          .send({ message: "You are not authorized to delete this item" });
+      }
+
+      return Item.findByIdAndDelete(itemId);
+    })
+    .then(() => {
+      res.status(OK).send({ message: "Item deleted successfully" });
     })
     .catch((err) => {
       console.error(err);
@@ -67,9 +79,33 @@ const deleteItem = (req, res) => {
         return res.status(NOT_FOUND).send({ message: err.message });
       }
       return res
-        .status(BAD_REQUEST)
+        .status(INTERNAL_SERVER_ERROR)
         .send({ message: "Error deleting the item" });
     });
+
+  // Item.findByIdAndDelete(itemId)
+  //   .orFail(() => {
+  //     const error = new Error("Clothing item not found");
+  //     error.statusCode = NOT_FOUND;
+  //     throw error;
+  //   })
+  //   .then((item) => {
+  //     res.status(OK).send({ message: `${item} Item deleted successfully` });
+  //   })
+  //   .catch((err) => {
+  //     console.error(err);
+  //     if (err.name === "CastError") {
+  //       return res
+  //         .status(BAD_REQUEST)
+  //         .send({ message: "Invalid item ID format" });
+  //     }
+  //     if (err.statusCode === NOT_FOUND) {
+  //       return res.status(NOT_FOUND).send({ message: err.message });
+  //     }
+  //     return res
+  //       .status(BAD_REQUEST)
+  //       .send({ message: "Error deleting the item" });
+  //   });
 };
 
 const likeItem = (req, res) => {
