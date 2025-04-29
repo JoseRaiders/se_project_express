@@ -62,11 +62,9 @@ const loginUser = (req, res) => {
       res.send({ token });
     })
     .catch((err) => {
-      res
-        .status(BAD_REQUEST)
-        .send({
-          message: `${err.message}. Authentication failed. Invalid email or password`,
-        });
+      res.status(BAD_REQUEST).send({
+        message: `${err.message}. Authentication failed. Invalid email or password`,
+      });
     });
 };
 
@@ -110,11 +108,11 @@ const getCurrentUser = (req, res) => {
   const userId = req.user._id;
 
   return User.findById(userId)
-    .then((user) =>
+    .then((user) => {
       user
         ? res.status(OK).send({ data: user })
-        : res.status(NOT_FOUND).send({ message: "User not found" })
-    )
+        : res.status(NOT_FOUND).send({ message: "User not found" });
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
