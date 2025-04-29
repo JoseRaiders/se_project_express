@@ -12,42 +12,25 @@ const {
   INTERNAL_SERVER_ERROR,
 } = require("../utils/errors");
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
-  return bcrypt
+  bcrypt
     .hash(password, 10)
-    .then((hash) =>
-      User.create({
-        name,
-        avatar,
-        email,
-        password: hash,
-      })
-    )
-    .then((user) => {
-      user.password = undefined;
-      return res.status(CREATED).send({
-        name: user.name,
-        avatar: user.avatar,
-        email: user.email,
-        _id: user._id,
-        message: "User successfully created",
-      });
-    })
+    .then((hash) => User.create({ name, avatar, email, password: hash }))
+    .then(() => res.status(OK).send({ name, avatar, email }))
     .catch((err) => {
       console.error(err);
       if (err.code === 11000) {
         return res
           .status(CONFLICT_ERROR)
-          .send({ message: "User email already exists" });
+          .send({ message: "User with this email already exists" });
       }
+
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Error creating the user" });
+      return next(err);
     });
 };
 
