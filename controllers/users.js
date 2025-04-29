@@ -15,7 +15,7 @@ const {
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
 
-  bcrypt
+  return bcrypt
     .hash(password, 10)
     .then((hash) =>
       User.create({
@@ -27,7 +27,7 @@ const createUser = (req, res) => {
     )
     .then((user) => {
       user.password = undefined;
-      res.status(CREATED).send({
+      return res.status(CREATED).send({
         name: user.name,
         avatar: user.avatar,
         email: user.email,
