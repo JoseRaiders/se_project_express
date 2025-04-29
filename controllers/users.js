@@ -18,7 +18,7 @@ const createUser = (req, res, next) => {
   bcrypt
     .hash(password, 10)
     .then((hash) => User.create({ name, avatar, email, password: hash }))
-    .then(() => res.status(OK).send({ name, avatar, email }))
+    .then(() => res.status(CREATED).send({ name, avatar, email }))
     .catch((err) => {
       console.error(err);
       if (err.code === 11000) {
@@ -51,7 +51,7 @@ const loginUser = (req, res) => {
     });
 };
 
-const updateUserProfile = (req, res) => {
+const updateUserProfile = (req, res, next) => {
   const { name, avatar } = req.body;
 
   if (!name && !avatar) {
@@ -65,12 +65,12 @@ const updateUserProfile = (req, res) => {
     { name, avatar },
     { new: true, runValidators: true }
   )
-    .then((user) => {
-      if (!user) {
+    .then((updatedUser) => {
+      if (!updatedUser) {
         return res.status(NOT_FOUND).send({ message: "User not found" });
       }
-      delete user.password;
-      return res.status(OK).send({ data: user });
+      delete updatedUser.password;
+      return res.status(OK).send({ data: updatedUser });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -81,9 +81,7 @@ const updateUserProfile = (req, res) => {
           .status(BAD_REQUEST)
           .send({ message: "Invalid data format for name or avatar" });
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Error updating user profile" });
+      return next(err);
     });
 };
 
