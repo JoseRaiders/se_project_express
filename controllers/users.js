@@ -65,12 +65,13 @@ const updateUserProfile = (req, res, next) => {
     { name, avatar },
     { new: true, runValidators: true }
   )
-    .then((updatedUser) => {
-      if (!updatedUser) {
+    .then((user) => {
+      if (!user) {
         return res.status(NOT_FOUND).send({ message: "User not found" });
       }
-      delete updatedUser.password;
-      return res.status(OK).send({ data: updatedUser });
+      const responseUser = user.toObject();
+      delete responseUser.password;
+      return res.status(OK).send({ data: responseUser });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
