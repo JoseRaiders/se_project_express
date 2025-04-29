@@ -64,7 +64,9 @@ const loginUser = (req, res) => {
     .catch((err) => {
       res
         .status(BAD_REQUEST)
-        .send({ message: "Authentication failed. Invalid email or password" });
+        .send({
+          message: `${err.message}. Authentication failed. Invalid email or password`,
+        });
     });
 };
 
