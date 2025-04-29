@@ -111,9 +111,8 @@ const getCurrentUser = (req, res) => {
     .then((user) => {
       if (user) {
         return res.status(OK).send({ data: user });
-      } else {
-        return res.status(NOT_FOUND).send({ message: "User not found" });
       }
+      return res.status(NOT_FOUND).send({ message: "User not found" });
     })
     .catch((err) => {
       console.error(err);
