@@ -17,7 +17,7 @@ const createUser = (req, res, next) => {
 
   bcrypt
     .hash(password, 10)
-    .then((hash) => User.create({ name, avatar, email, password: hash }))
+    .then((hash) => User.create({ name, avatar, email, password: hash })) // <-- Direct return without block
     .then(() => res.status(CREATED).send({ name, avatar, email }))
     .catch((err) => {
       console.error(err);
@@ -90,9 +90,7 @@ const getCurrentUser = (req, res) => {
   const userId = req.user._id;
 
   User.findById(userId)
-    .then((user) => {
-      return res.status(OK).send({ data: user });
-    })
+    .then((user) => res.status(OK).send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
         return res
