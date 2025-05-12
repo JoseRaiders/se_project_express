@@ -89,15 +89,11 @@ const updateUserProfile = (req, res, next) => {
 const getCurrentUser = (req, res) => {
   const userId = req.user._id;
 
-  return User.findById(userId)
+  User.findById(userId)
     .then((user) => {
-      if (user) {
-        return res.status(OK).send({ data: user });
-      }
-      return res.status(NOT_FOUND).send({ message: "User not found" });
+      return res.status(OK).send({ data: user });
     })
     .catch((err) => {
-      console.error(err);
       if (err.name === "CastError") {
         return res
           .status(BAD_REQUEST)
