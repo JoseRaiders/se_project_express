@@ -22,5 +22,6 @@ module.exports = {
   rules: {
     "no-console": ["warn", { allow: ["error"] }],
     "no-underscore-dangle": ["error", { allow: ["_id"] }],
+    "arrow-body-style": ["error", "as-needed"],
   },
 };

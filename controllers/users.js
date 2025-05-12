@@ -43,11 +43,11 @@ const loginUser = (req, res) => {
         token: jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: "7d" }),
       })
     )
-    .catch((err) => {
-      return res.status(BAD_REQUEST).send({
+    .catch((err) =>
+      res.status(BAD_REQUEST).send({
         message: `${err.message}. Authentication failed. Invalid email or password`,
-      });
-    });
+      })
+    );
 };
 
 const updateUserProfile = (req, res, next) => {
