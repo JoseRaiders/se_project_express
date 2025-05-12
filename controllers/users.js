@@ -68,6 +68,7 @@ const updateUserProfile = (req, res, next) => {
       if (!user) {
         return res.status(NOT_FOUND).send({ message: "User not found" });
       }
+
       const responseUser = user.toObject();
       delete responseUser.password;
       return res.status(OK).send({ data: responseUser });
@@ -76,11 +77,13 @@ const updateUserProfile = (req, res, next) => {
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
+
       if (err.name === "CastError") {
         return res
           .status(BAD_REQUEST)
           .send({ message: "Invalid data format for name or avatar" });
       }
+
       return next(err);
     });
 };
