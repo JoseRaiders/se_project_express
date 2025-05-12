@@ -59,7 +59,7 @@ const updateUserProfile = (req, res, next) => {
       .send({ message: "Name or Avatar must be provided" });
   }
 
-  User.findByIdAndUpdate(
+  return User.findByIdAndUpdate(
     req.user._id,
     { name, avatar },
     { new: true, runValidators: true }
