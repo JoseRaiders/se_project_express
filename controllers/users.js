@@ -18,9 +18,14 @@ const createUser = (req, res, next) => {
   bcrypt
     .hash(password, 10)
     .then((hash) => User.create({ name, avatar, email, password: hash })) // direct return without block
-    .then(() => res.status(CREATED).send({ name, avatar, email }))
+    .then(() => {
+      return res.status(CREATED).send({
+        message: "User successfully created",
+        user: { name, avatar, email },
+      });
+    })
     .catch((err) => {
-      console.error(err);
+      console.error("Error creating user:", err);
       if (err.code === 11000) {
         return res
           .status(CONFLICT_ERROR)
