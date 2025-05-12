@@ -42,10 +42,10 @@ const loginUser = (req, res) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.send({ token });
+      return res.send({ token });
     })
     .catch((err) => {
-      res.status(BAD_REQUEST).send({
+      return res.status(BAD_REQUEST).send({
         message: `${err.message}. Authentication failed. Invalid email or password`,
       });
     });
