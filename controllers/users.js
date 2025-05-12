@@ -17,7 +17,7 @@ const createUser = (req, res, next) => {
 
   bcrypt
     .hash(password, 10)
-    .then((hash) => User.create({ name, avatar, email, password: hash })) // <-- Direct return without block
+    .then((hash) => User.create({ name, avatar, email, password: hash })) // direct return without block
     .then(() => res.status(CREATED).send({ name, avatar, email }))
     .catch((err) => {
       console.error(err);
@@ -38,12 +38,11 @@ const loginUser = (req, res) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-        expiresIn: "7d",
-      });
-      return res.send({ token });
-    })
+    .then((user) =>
+      res.send({
+        token: jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: "7d" }),
+      })
+    )
     .catch((err) => {
       return res.status(BAD_REQUEST).send({
         message: `${err.message}. Authentication failed. Invalid email or password`,
