@@ -6,7 +6,7 @@ const {
   OK,
   CREATED,
   BAD_REQUEST,
-  // UNAUTHORIZED_ERROR,
+  UNAUTHORIZED_ERROR,
   NOT_FOUND,
   CONFLICT_ERROR,
   INTERNAL_SERVER_ERROR,
@@ -18,12 +18,7 @@ const createUser = (req, res, next) => {
   bcrypt
     .hash(password, 10)
     .then((hash) => User.create({ name, avatar, email, password: hash })) // direct return without block
-    .then(() =>
-      res.status(CREATED).send({
-        message: "User successfully created",
-        user: { name, avatar, email },
-      })
-    )
+    .then(() => res.status(CREATED).send({ name, avatar, email }))
     .catch((err) => {
       console.error("Error creating user:", err);
       if (err.code === 11000) {
@@ -39,20 +34,35 @@ const createUser = (req, res, next) => {
     });
 };
 
-const loginUser = (req, res) => {
+const loginUser = (req, res, next) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: "Email and password are required" });
+  }
+
   return User.findUserByCredentials(email, password)
-    .then((user) =>
-      res.send({
-        token: jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: "7d" }),
-      })
-    )
-    .catch((err) =>
-      res.status(BAD_REQUEST).send({
-        message: `${err.message}. Authentication failed. Invalid email or password`,
-      })
-    );
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
+      });
+
+      res.send({ token });
+    })
+    .catch((err) => {
+      if (err.message === "Incorrect email or password") {
+        return res
+          .status(UNAUTHORIZED_ERROR)
+          .send({ message: "Incorrect email or password" });
+      }
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+      }
+
+      return next(err);
+    });
 };
 
 const updateUserProfile = (req, res, next) => {
