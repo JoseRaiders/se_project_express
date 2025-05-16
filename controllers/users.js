@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 const User = require("../models/user");
 const {
-  OK,
   CREATED,
   BAD_REQUEST,
   UNAUTHORIZED_ERROR,
@@ -97,7 +96,7 @@ const updateUserProfile = (req, res) => {
 
       const responseUser = user.toObject();
       delete responseUser.password;
-      return res.status(OK).send({ data: responseUser });
+      return res.send({ data: responseUser });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
@@ -120,7 +119,7 @@ const getCurrentUser = (req, res) => {
   const userId = req.user._id;
 
   User.findById(userId)
-    .then((user) => res.status(OK).send({ data: user }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "CastError") {
         return res

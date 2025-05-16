@@ -1,6 +1,5 @@
 const Item = require("../models/clothingItem");
 const {
-  OK,
   CREATED,
   BAD_REQUEST,
   FORBIDDEN_ERROR,
@@ -10,7 +9,7 @@ const {
 
 const getItems = (req, res) => {
   Item.find({})
-    .then((items) => res.status(OK).send({ data: items }))
+    .then((items) => res.send({ data: items }))
     .catch((err) => {
       console.error(err);
       return res
@@ -64,7 +63,7 @@ const deleteItem = (req, res) => {
       }
 
       return Item.findByIdAndDelete(itemId).then(() => {
-        res.status(OK).send({ message: "Item deleted successfully" });
+        res.send({ message: "Item deleted successfully" });
       });
     })
     .catch((err) => {
@@ -96,7 +95,7 @@ const likeItem = (req, res) => {
       if (!item) {
         return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
-      return res.status(OK).send({ data: item });
+      return res.send({ data: item });
     })
     .catch((err) => {
       console.error(err);
@@ -121,7 +120,7 @@ const dislikeItem = (req, res) => {
       if (!item) {
         return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
-      return res.status(OK).send({ data: item });
+      return res.send({ data: item });
     })
     .catch((err) => {
       console.error(err);
