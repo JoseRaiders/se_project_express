@@ -63,49 +63,27 @@ const deleteItem = (req, res) => {
           .send({ message: "You are not authorized to delete this item" });
       }
 
-      return Item.findByIdAndDelete(itemId);
-    })
-    .then(() => {
-      res.status(OK).send({ message: "Item deleted successfully" });
+      return Item.findByIdAndDelete(itemId).then(() => {
+        res.status(OK).send({ message: "Item deleted successfully" });
+      });
     })
     .catch((err) => {
       console.error(err);
+
       if (err.name === "CastError") {
         return res
           .status(BAD_REQUEST)
           .send({ message: "Invalid item ID format" });
       }
+
       if (err.statusCode === NOT_FOUND) {
         return res.status(NOT_FOUND).send({ message: err.message });
       }
+
       return res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: "Error deleting the item" });
     });
-
-  // Item.findByIdAndDelete(itemId)
-  //   .orFail(() => {
-  //     const error = new Error("Clothing item not found");
-  //     error.statusCode = NOT_FOUND;
-  //     throw error;
-  //   })
-  //   .then((item) => {
-  //     res.status(OK).send({ message: `${item} Item deleted successfully` });
-  //   })
-  //   .catch((err) => {
-  //     console.error(err);
-  //     if (err.name === "CastError") {
-  //       return res
-  //         .status(BAD_REQUEST)
-  //         .send({ message: "Invalid item ID format" });
-  //     }
-  //     if (err.statusCode === NOT_FOUND) {
-  //       return res.status(NOT_FOUND).send({ message: err.message });
-  //     }
-  //     return res
-  //       .status(BAD_REQUEST)
-  //       .send({ message: "Error deleting the item" });
-  //   });
 };
 
 const likeItem = (req, res) => {

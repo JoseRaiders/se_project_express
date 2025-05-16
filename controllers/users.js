@@ -37,7 +37,9 @@ const createUser = (req, res, next) => {
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
-      return next(err);
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Error creating user" });
     });
 };
 
@@ -68,7 +70,9 @@ const loginUser = (req, res, next) => {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
 
-      return next(err);
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Error logging in" });
     });
 };
 
@@ -106,7 +110,9 @@ const updateUserProfile = (req, res, next) => {
           .send({ message: "Invalid data format for name or avatar" });
       }
 
-      return next(err);
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Error updating user profile" });
     });
 };
 
