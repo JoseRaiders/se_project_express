@@ -12,7 +12,7 @@ const {
   INTERNAL_SERVER_ERROR,
 } = require("../utils/errors");
 
-const createUser = (req, res, next) => {
+const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
 
   bcrypt
@@ -43,7 +43,7 @@ const createUser = (req, res, next) => {
     });
 };
 
-const loginUser = (req, res, next) => {
+const loginUser = (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -76,7 +76,7 @@ const loginUser = (req, res, next) => {
     });
 };
 
-const updateUserProfile = (req, res, next) => {
+const updateUserProfile = (req, res) => {
   const { name, avatar } = req.body;
 
   if (!name && !avatar) {
